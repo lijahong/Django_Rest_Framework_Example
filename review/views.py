@@ -1,11 +1,13 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from review.serializer import ReviewSerializers
 from review.models import Review
 from rest_framework.views import APIView
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
 
@@ -16,6 +18,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
             qs = qs.filter(score__icontains = search_score)#원하는 목록만 filter로 가져온다
         return qs
 
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(writer=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=['get'] , url_path="search/(?P<score>[^/.]+)") #detail이 true면 하나 조회, false면 목록, method에는 허용할 method들 정의
     def abc(self, request, score=None): #name이 없다면 None으로 처리
         qs = self.get_queryset().filter(score__icontains=score)  #모델을 검색하여 뽑아온다
@@ -24,6 +33,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class ReviewAPIList(APIView):
+        permission_classes = [IsAuthenticatedOrReadOnly]
         def get(self, request): #전체 목록
             qs = Review.objects.all()
             serializer = ReviewSerializers(qs, many=True)
@@ -31,11 +41,12 @@ class ReviewAPIList(APIView):
         def post(self, request):
             serializer = ReviewSerializers(data=request.data, many=False)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(writer = request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ReviewAPIDetail(APIView):
+        permission_classes = [IsAuthenticatedOrReadOnly]
         def get(self, request, pk): #단일 Data , pk : primary key
             qs = Review.objects.get(id=pk)
             serializer = ReviewSerializers(qs, many=False)

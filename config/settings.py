@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-77ovb(8zy(&r_1&nlu5w%r_ys+mr+g7h*^@v%%e(_2%je)lqp4'
+SECRET_KEY = '시크릿키'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -60,6 +60,7 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt_token'
 JWT_AUTH_REFRESH_COOKIE = 'jwt_refresh_token'
 
+ACCOUNT_EMAIL_VERIFICATION = "none"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -98,7 +99,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'drfboard',
-        'USER': 'table이름',
+        'USER': '유저이름',
         'PASSWORD':'비밀번호',
         'HOST': '192.168.19.3',
         'PORT': '3306',
