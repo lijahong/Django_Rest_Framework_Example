@@ -1,8 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from review.serializer import ReviewSerializers
 from review.models import Review
+from rest_framework.views import APIView
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
@@ -21,3 +22,32 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(qs, many=True)
 
         return Response(serializer.data)
+
+class ReviewAPIList(APIView):
+        def get(self, request): #전체 목록
+            qs = Review.objects.all()
+            serializer = ReviewSerializers(qs, many=True)
+            return Response(serializer.data)
+        def post(self, request):
+            serializer = ReviewSerializers(data=request.data, many=False)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ReviewAPIDetail(APIView):
+        def get(self, request, pk): #단일 Data , pk : primary key
+            qs = Review.objects.get(id=pk)
+            serializer = ReviewSerializers(qs, many=False)
+            return Response(serializer.data)
+        def put(self,request, pk):
+            qs = Review.objects.get(id=pk)
+            serializer = ReviewSerializers(qs, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        def delete(self, request, pk):
+            qs = Review.objects.get(id=pk)
+            qs.delete()
+            return Response( status=status.HTTP_204_NO_CONTENT_CREATED)

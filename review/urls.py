@@ -8,5 +8,7 @@ router.register('review',review.views.ReviewViewSet) #viewset class 안의 메�
 
 urlpatterns = [
     path('',include(router.urls)),
+    path('reviewapi/', review.views.ReviewAPIList.as_view()),
+    path('reviewapi/<int:pk>/', review.views.ReviewAPIDetail.as_view())
 ]
 
