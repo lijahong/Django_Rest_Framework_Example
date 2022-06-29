@@ -9,3 +9,4 @@ router.register('review',review.views.ReviewViewSet) #viewset class 안의 메�
 urlpatterns = [
     path('',include(router.urls)),
 ]
+

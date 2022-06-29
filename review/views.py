@@ -15,7 +15,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
             qs = qs.filter(score__icontains = search_score)#원하는 목록만 filter로 가져온다
         return qs
 
-    @action(detail=False, methods=['get'],url_path="search/(?P<score>[^/.]+)") #detail이 true면 하나 조회, false면 목록, method에는 허용할 method들 정의
+    @action(detail=False, methods=['get'] , url_path="search/(?P<score>[^/.]+)") #detail이 true면 하나 조회, false면 목록, method에는 허용할 method들 정의
     def abc(self, request, score=None): #name이 없다면 None으로 처리
         qs = self.get_queryset().filter(score__icontains=score)  #모델을 검색하여 뽑아온다
         serializer = self.get_serializer(qs, many=True)
